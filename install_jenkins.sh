@@ -1,25 +1,47 @@
-#! /usr/bin/bash
+#!/bin/bash
 
-#Update Your System
-sudo apt update
-sudo apt upgrade -y
+# Update the system package list and upgrade all packages
+echo "Updating system package list and upgrading all packages..."
+sudo apt update && sudo apt upgrade -y
 
-#Install Java
+# Install Java
+echo "Installing OpenJDK 11..."
 sudo apt install openjdk-11-jdk -y
 
-#Add Jenkins Repository
+# Verify Java installation
+java -version
+
+# Add Jenkins repository key to the system
+echo "Adding Jenkins repository key..."
 wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
 
-#Then, add the Jenkins repository to the package list.
+# Add Jenkins repository to the package list
+echo "Adding Jenkins repository to the package list..."
 sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
 
-#Now Install Jenkins
+# Update package list
+echo "Updating package list..."
 sudo apt update
+
+# Install Jenkins
+echo "Installing Jenkins..."
 sudo apt install jenkins -y
 
-#Start and Enable Jenkins
+# Start Jenkins service
+echo "Starting Jenkins service..."
 sudo systemctl start jenkins
+
+# Enable Jenkins to start on boot
+echo "Enabling Jenkins to start on boot..."
 sudo systemctl enable jenkins
 
-#Then see the jenkins status
-sudo systemctl status jenkins 
+# Adjust firewall to allow Jenkins through port 8080 (if UFW is enabled)
+echo "Configuring firewall to allow Jenkins through port 8080..."
+sudo ufw allow 8080
+sudo ufw status
+
+# Display initial Jenkins admin password
+echo "Displaying initial Jenkins admin password..."
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+echo "Jenkins installation complete. Access Jenkins at http://your_server_ip_or_domain:8080"
